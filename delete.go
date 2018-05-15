@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/olivere/elastic/uritemplates"
+	"github.com/peernova-private/elastic/uritemplates"
 )
 
 // DeleteService allows to delete a typed JSON document from a specified

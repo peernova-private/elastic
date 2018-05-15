@@ -16,10 +16,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/olivere/env"
+	"github.com/peernova-private/env"
 	"github.com/smartystreets/go-aws-auth"
 
-	"github.com/olivere/elastic"
+	"github.com/peernova-private/elastic"
 )
 
 type AWSSigningTransport struct {

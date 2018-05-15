@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/olivere/elastic/uritemplates"
+	"github.com/peernova-private/elastic/uritemplates"
 )
 
 // IndicesForcemergeService allows to force merging of one or more indices.

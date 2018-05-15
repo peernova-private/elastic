@@ -12,7 +12,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/olivere/elastic/uritemplates"
+	"github.com/peernova-private/elastic/uritemplates"
 )
 
 // Search for documents in Elasticsearch.
@@ -20,6 +20,7 @@ type SearchService struct {
 	client            *Client
 	searchSource      *SearchSource
 	source            interface{}
+	path              interface{}
 	pretty            bool
 	filterPath        []string
 	searchType        string
@@ -55,6 +56,13 @@ func (s *SearchService) SearchSource(searchSource *SearchSource) *SearchService 
 // any of the structs and interfaces in Elastic.
 func (s *SearchService) Source(source interface{}) *SearchService {
 	s.source = source
+	return s
+}
+
+// Path allows the user to set the request path manually without using
+// any of the structs and interfaces in Elastic.
+func (s *SearchService) Path(path interface{}) *SearchService {
+	s.path = path
 	return s
 }
 
@@ -317,24 +325,28 @@ func (s *SearchService) buildURL() (string, url.Values, error) {
 	var err error
 	var path string
 
-	if len(s.index) > 0 && len(s.typ) > 0 {
-		path, err = uritemplates.Expand("/{index}/{type}/_search", map[string]string{
-			"index": strings.Join(s.index, ","),
-			"type":  strings.Join(s.typ, ","),
-		})
-	} else if len(s.index) > 0 {
-		path, err = uritemplates.Expand("/{index}/_search", map[string]string{
-			"index": strings.Join(s.index, ","),
-		})
-	} else if len(s.typ) > 0 {
-		path, err = uritemplates.Expand("/_all/{type}/_search", map[string]string{
-			"type": strings.Join(s.typ, ","),
-		})
+	if s.path != nil {
+		path = s.path
 	} else {
-		path = "/_search"
-	}
-	if err != nil {
-		return "", url.Values{}, err
+		if len(s.index) > 0 && len(s.typ) > 0 {
+			path, err = uritemplates.Expand("/{index}/{type}/_search", map[string]string{
+				"index": strings.Join(s.index, ","),
+				"type":  strings.Join(s.typ, ","),
+			})
+		} else if len(s.index) > 0 {
+			path, err = uritemplates.Expand("/{index}/_search", map[string]string{
+				"index": strings.Join(s.index, ","),
+			})
+		} else if len(s.typ) > 0 {
+			path, err = uritemplates.Expand("/_all/{type}/_search", map[string]string{
+				"type": strings.Join(s.typ, ","),
+			})
+		} else {
+			path = "/_search"
+		}
+		if err != nil {
+			return "", url.Values{}, err
+		}
 	}
 
 	// Add query string parameters

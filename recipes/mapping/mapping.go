@@ -19,7 +19,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/olivere/elastic"
+	"github.com/peernova-private/elastic"
 )
 
 const (

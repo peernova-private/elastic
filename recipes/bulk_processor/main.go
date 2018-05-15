@@ -25,8 +25,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/olivere/elastic"
-	"github.com/olivere/elastic/config"
+	"github.com/peernova-private/elastic"
+	"github.com/peernova-private/elastic/config"
 )
 
 func main() {
