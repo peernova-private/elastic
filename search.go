@@ -326,7 +326,7 @@ func (s *SearchService) buildURL() (string, url.Values, error) {
 	var path string
 
 	if s.path != nil {
-		path = s.path
+		path = s.path.(string)
 	} else {
 		if len(s.index) > 0 && len(s.typ) > 0 {
 			path, err = uritemplates.Expand("/{index}/{type}/_search", map[string]string{
