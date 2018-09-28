@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"gopkg.in/olivere/elastic.v5/uritemplates"
+	"github.com/peernova-private/elastic/uritemplates"
 )
 
 // CountService is a convenient service for determining the

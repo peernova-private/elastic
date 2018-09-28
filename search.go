@@ -12,7 +12,7 @@ import (
 	"reflect"
 	"strings"
 
-	"gopkg.in/olivere/elastic.v5/uritemplates"
+	"github.com/peernova-private/elastic/uritemplates"
 )
 
 // Search for documents in Elasticsearch.
@@ -463,7 +463,7 @@ type SearchHits struct {
 
 // SearchHit is a single hit.
 type SearchHit struct {
-	Score          *float64                       `json:"_score"`          // computed score
+	Score          *json.RawMessage               `json:"_score"`          // computed score
 	Index          string                         `json:"_index"`          // index name
 	Type           string                         `json:"_type"`           // type meta field
 	Id             string                         `json:"_id"`             // external or internal

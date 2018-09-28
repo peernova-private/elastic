@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"gopkg.in/olivere/elastic.v5/uritemplates"
+	"github.com/peernova-private/elastic/uritemplates"
 )
 
 // SearchShardsService returns the indices and shards that a search request would be executed against.

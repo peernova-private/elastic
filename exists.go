@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"gopkg.in/olivere/elastic.v5/uritemplates"
+	"github.com/peernova-private/elastic/uritemplates"
 )
 
 // ExistsService checks for the existence of a document using HEAD.
