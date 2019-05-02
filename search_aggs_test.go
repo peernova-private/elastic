@@ -89,6 +89,7 @@ func TestAggs(t *testing.T) {
 	missingTagsAgg := NewMissingAggregation().Field("tags")
 	retweetsHistoAgg := NewHistogramAggregation().Field("retweets").Interval(100)
 	dateHistoAgg := NewDateHistogramAggregation().Field("created").Interval("year")
+	dateHistoKeyedAgg := NewDateHistogramAggregation().Field("created").Interval("year").Keyed(true)
 	retweetsFilterAgg := NewFilterAggregation().Filter(
 		NewRangeQuery("created").Gte("2012-01-01").Lte("2012-12-31")).
 		SubAggregation("avgRetweetsSub", NewAvgAggregation().Field("retweets"))
@@ -123,6 +124,7 @@ func TestAggs(t *testing.T) {
 	builder = builder.Aggregation("missingTags", missingTagsAgg)
 	builder = builder.Aggregation("retweetsHisto", retweetsHistoAgg)
 	builder = builder.Aggregation("dateHisto", dateHistoAgg)
+	builder = builder.Aggregation("dateHistoKeyed", dateHistoKeyedAgg)
 	builder = builder.Aggregation("retweetsFilter", retweetsFilterAgg)
 	builder = builder.Aggregation("queryFilter", queryFilterAgg)
 	builder = builder.Aggregation("top-tags", topTagsAgg)
@@ -781,7 +783,7 @@ func TestAggs(t *testing.T) {
 		t.Errorf("expected %v; got: %v", 1.29384e+12, dateHistoRes.Buckets[0].Key)
 	}
 	if dateHistoRes.Buckets[0].KeyAsString == nil {
-		t.Fatalf("expected != nil; got: %q", dateHistoRes.Buckets[0].KeyAsString)
+		t.Fatalf("expected != nil; got: %v", dateHistoRes.Buckets[0].KeyAsString)
 	}
 	if *dateHistoRes.Buckets[0].KeyAsString != "2011-01-01T00:00:00.000Z" {
 		t.Errorf("expected %q; got: %q", "2011-01-01T00:00:00.000Z", *dateHistoRes.Buckets[0].KeyAsString)
@@ -793,10 +795,58 @@ func TestAggs(t *testing.T) {
 		t.Errorf("expected %v; got: %v", 1.325376e+12, dateHistoRes.Buckets[1].Key)
 	}
 	if dateHistoRes.Buckets[1].KeyAsString == nil {
-		t.Fatalf("expected != nil; got: %q", dateHistoRes.Buckets[1].KeyAsString)
+		t.Fatalf("expected != nil; got: %v", dateHistoRes.Buckets[1].KeyAsString)
 	}
 	if *dateHistoRes.Buckets[1].KeyAsString != "2012-01-01T00:00:00.000Z" {
 		t.Errorf("expected %q; got: %q", "2012-01-01T00:00:00.000Z", *dateHistoRes.Buckets[1].KeyAsString)
+	}
+
+	// dateHistoKeyed
+	{
+		res, found := agg.KeyedDateHistogram("dateHistoKeyed")
+		if !found {
+			t.Errorf("expected %v; got: %v", true, found)
+		}
+		if res == nil {
+			t.Fatalf("expected != nil; got: nil")
+		}
+		if len(res.Buckets) != 2 {
+			t.Fatalf("expected %d; got: %d", 2, len(res.Buckets))
+		}
+
+		bucket, ok := res.Buckets["2011-01-01T00:00:00.000Z"]
+		if !ok || bucket == nil {
+			t.Fatalf("expected to have bucket with key %q", "2011-01-01T00:00:00.000Z")
+		}
+		if bucket.DocCount != 1 {
+			t.Errorf("expected %d; got: %d", 1, bucket.DocCount)
+		}
+		if bucket.Key != 1.29384e+12 {
+			t.Errorf("expected %v; got: %v", 1.29384e+12, bucket.Key)
+		}
+		if bucket.KeyAsString == nil {
+			t.Fatalf("expected != nil; got: %v", bucket.KeyAsString)
+		}
+		if *bucket.KeyAsString != "2011-01-01T00:00:00.000Z" {
+			t.Errorf("expected %q; got: %q", "2011-01-01T00:00:00.000Z", *bucket.KeyAsString)
+		}
+
+		bucket, ok = res.Buckets["2012-01-01T00:00:00.000Z"]
+		if !ok || bucket == nil {
+			t.Fatalf("expected to have bucket with key %q", "2012-01-01T00:00:00.000Z")
+		}
+		if bucket.DocCount != 2 {
+			t.Errorf("expected %d; got: %d", 2, bucket.DocCount)
+		}
+		if bucket.Key != 1.325376e+12 {
+			t.Errorf("expected %v; got: %v", 1.325376e+12, bucket.Key)
+		}
+		if bucket.KeyAsString == nil {
+			t.Fatalf("expected != nil; got: %v", bucket.KeyAsString)
+		}
+		if *bucket.KeyAsString != "2012-01-01T00:00:00.000Z" {
+			t.Errorf("expected %q; got: %q", "2012-01-01T00:00:00.000Z", *bucket.KeyAsString)
+		}
 	}
 
 	// topHits
