@@ -1,4 +1,4 @@
-module gopkg.in/olivere/elastic.v5
+module github.com/peernova-private/elastic
 
 require (
 	github.com/fortytw2/leaktest v1.2.0

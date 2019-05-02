@@ -13,7 +13,7 @@ import (
 
 	"github.com/smartystreets/go-aws-auth"
 
-	"gopkg.in/olivere/elastic.v5"
+	"github.com/peernova-private/elastic"
 )
 
 func TestSigningClient(t *testing.T) {

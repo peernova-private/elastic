@@ -17,8 +17,8 @@ import (
 
 	"github.com/olivere/env"
 	"github.com/smartystreets/go-aws-auth"
-	elastic "gopkg.in/olivere/elastic.v5"
-	"gopkg.in/olivere/elastic.v5/aws"
+	elastic "github.com/peernova-private/elastic"
+	"github.com/peernova-private/elastic/aws"
 )
 
 func main() {
